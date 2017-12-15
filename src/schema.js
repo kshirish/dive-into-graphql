@@ -1,15 +1,22 @@
 const _ = require('lodash');
+const uuidv4 = require('uuid/v4');
+const List = require('./data/list');
+const ListItemType = require('./types/listItemType');
+const Details = require('./data/details');
+
 const {
 	GraphQLSchema,
 	GraphQLObjectType,
-	GraphQLList
+	GraphQLList,
+	GraphQLNonNull
 } = require('graphql');
 
-const List = require('./data/list');
-const ListItemType = require('./types/listItemType');
-
-const Details = require('./data/details');
-const DetailItemType = require('./types/detailItemType');
+const { 
+	DetailItemType, 
+	DetailItemCreateType, 
+	DetailItemUpdateType, 
+	DetailItemDeleteType 
+} = require('./types/detailItemType');
 
 const QueryRootType = new GraphQLObjectType({
 	name: 'AppSchema',
@@ -32,8 +39,59 @@ const QueryRootType = new GraphQLObjectType({
 	})
 });
 
+const MutationRootType = new GraphQLObjectType({
+	name: 'MutationRootType',
+	description: 'Application Schema Mutation Root',
+	fields: {
+		createDetailItem: {
+			type: DetailItemType,
+			args: {
+				input: { type: new GraphQLNonNull(DetailItemCreateType) }
+			},
+			resolve: (source, { input }) => {
+
+				let data = {};
+
+				data.imdbID = uuidv4();
+				data.Title = input.Title;
+				data.Director = input.Director;
+				data.imdbRating = input.imdbRating;
+				data.shouldWatch = input.shouldWatch;
+
+				Details.push(data);
+				return data;
+			}
+		},
+		updateDetailItem: {
+			type: DetailItemType,
+			args: {
+				input: { type: new GraphQLNonNull(DetailItemUpdateType) }
+			},
+			resolve: (source, { input }) => {
+				
+				const item = _.find(Details, d => d.imdbID !== input.imdbID); 
+
+				item.Title = input.Title;
+				return item;
+			}
+		},
+		deleteDetailItem: {
+			type: DetailItemType,
+			args: {
+				input: { type: new GraphQLNonNull(DetailItemDeleteType) }
+			},
+			resolve: (source, { input }) => {
+
+				_.remove(Details, d => d.imdbID === input.imdbID)
+				return input;
+			}
+		}
+	}
+});
+
 const AppSchema = new GraphQLSchema({
-	query: QueryRootType 
+	query: QueryRootType,
+	mutation: MutationRootType
 });
 
 module.exports = AppSchema;

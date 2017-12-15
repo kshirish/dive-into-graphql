@@ -1,4 +1,5 @@
 const RatingType = require('./ratingType');
+
 const {
 	GraphQLString,
 	GraphQLFloat,
@@ -6,7 +7,8 @@ const {
 	GraphQLList,
 	GraphQLObjectType,
 	GraphQLEnumType,
-	GraphQLNonNull
+	GraphQLNonNull,
+	GraphQLInputObjectType
 } = require('graphql');
 
 const DetailItemType = new GraphQLObjectType({
@@ -16,10 +18,10 @@ const DetailItemType = new GraphQLObjectType({
 		imdbID: { type: new GraphQLNonNull(GraphQLString) },
 		Title: { type: new GraphQLNonNull(GraphQLString) },
 		Director: { type: new GraphQLNonNull(GraphQLString) },
-		Released: { type: new GraphQLNonNull(GraphQLString) },
-		Website: { type: new GraphQLNonNull(GraphQLString) },
 		imdbRating: { type: new GraphQLNonNull(GraphQLFloat) },
-		shouldWatch: { type: new GraphQLNonNull(GraphQLBoolean) },	
+		shouldWatch: { type: new GraphQLNonNull(GraphQLBoolean) },
+		Released: { type: GraphQLString },
+		Website: { type: GraphQLString },
 		Ratings: { type: new GraphQLList(RatingType) },
 		Rated: { type: new GraphQLEnumType({
 			name: 'Rated',
@@ -31,4 +33,37 @@ const DetailItemType = new GraphQLObjectType({
 	})
 });
 
-module.exports = DetailItemType;
+const DetailItemCreateType = new GraphQLInputObjectType({
+  name: 'DetailItemCreateType',
+  type: DetailItemType,
+  fields: {
+	Title: { type: new GraphQLNonNull(GraphQLString) },
+	Director: { type: new GraphQLNonNull(GraphQLString) },
+	imdbRating: { type: new GraphQLNonNull(GraphQLFloat) },
+	shouldWatch: { type: new GraphQLNonNull(GraphQLBoolean) }
+  }
+});
+
+const DetailItemUpdateType = new GraphQLInputObjectType({
+  name: 'DetailItemUpdateType',
+  type: DetailItemType,
+  fields: {
+    imdbID: { type: new GraphQLNonNull(GraphQLString) },
+    Title: { type: new GraphQLNonNull(GraphQLString) }
+  }
+});
+
+const DetailItemDeleteType = new GraphQLInputObjectType({
+  name: 'DetailItemDeleteType',
+  type: DetailItemType,
+  fields: {
+    imdbID: { type: new GraphQLNonNull(GraphQLString) },
+  }
+});
+
+module.exports = {
+	DetailItemType,
+	DetailItemCreateType,
+	DetailItemUpdateType,
+	DetailItemDeleteType
+};

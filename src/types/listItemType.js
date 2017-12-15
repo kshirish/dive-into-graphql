@@ -1,3 +1,7 @@
+const _ = require('lodash');
+const { DetailItemType } = require('./detailItemType');
+const Details = require('../data/details');
+
 const {
 	GraphQLString,
 	GraphQLObjectType,
@@ -10,7 +14,13 @@ const ListItemType = new GraphQLObjectType({
 	fields: () => ({
 		imdbID: { type: new GraphQLNonNull(GraphQLString) },
 		Title: { type: new GraphQLNonNull(GraphQLString) },
-		Poster: { type: GraphQLString }
+		Poster: { type: GraphQLString },
+		detail: {
+			type: DetailItemType,
+			resolve: function(listItem) {
+				return _.find(Details, a => a.imdbID == listItem.imdbID);
+			}
+		}
 	})
 });
 
