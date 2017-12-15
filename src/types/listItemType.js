@@ -10,8 +10,6 @@ const ListItemType = new GraphQLObjectType({
 	fields: () => ({
 		imdbID: { type: new GraphQLNonNull(GraphQLString) },
 		Title: { type: new GraphQLNonNull(GraphQLString) },
-		Type: { type: new GraphQLNonNull(GraphQLString) },
-		Year: { type: new GraphQLNonNull(GraphQLString) },
 		Poster: { type: GraphQLString }
 	})
 });

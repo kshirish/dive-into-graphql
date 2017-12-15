@@ -15,13 +15,20 @@ Run it using `node server.js` or `npm start` in the root directory of your appli
   list {
     imdbID
     Title
-    Type
-    Year
     Poster
   }
   details {
-    Rated,
+    imdbID
     Title
+    Director
+    Released
+    Website
+    imdbRating
+    shouldWatch
+    Ratings {
+      Source
+    }
+    Rated
   }
 }
 ```
